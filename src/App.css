@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+* {
+  box-sizing: border-box;
+}
+.h {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  text-align: center;
+  margin: auto;
+}
+
+.h img {
+  width: 8rem;
+  margin: 1rem;
+}
+
+.main {
+  display: flex;
+  margin: auto;
+  width: 80%;
+  align-items: center;
+  justify-content: center;
+  direction: rtl;
+}
+.main table,
+tbody {
+  display: block;
+  margin: auto;
+  text-align: center;
+}
+
+tbody,
+tr {
+  width: 100%;
+}
+
+th,
+tr,
+td {
+  border: 1px solid black;
+  font-size: 1.5rem;
+}
+
+table {
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 0.5rem;
+}
+
+.data {
+  direction: rtl;
+}
+
+.lnks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.lnks img {
+  width: 8rem;
+  margin: 1rem;
+}

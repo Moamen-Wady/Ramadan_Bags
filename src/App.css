@@ -122,22 +122,9 @@ body {
 * {
   box-sizing: border-box;
 }
-h1 {
-  font-family: "El Messiri", sans-serif !important;
-}
-.table th,
-.table td {
-  font-family: "El Messiri", sans-serif;
-  font-size: var(--r101);
-  text-align: center;
-  width: fit-content;
-  padding: var(--r1);
-}
 .table table {
   width: 95%;
-  margin: auto;
 }
 .table {
   width: 95%;
-  margin: 0 auto var(--r2) auto !important;
 }

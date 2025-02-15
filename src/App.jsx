@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api, { isCancel } from "./api";
 import {
   Table,
@@ -19,7 +19,9 @@ import {
   TextField,
   Divider,
   Box,
+  IconButton,
 } from "@mui/material";
+import { Add, Close } from "@mui/icons-material";
 
 export default function App() {
   const [selected, setSelected] = useState([]);
@@ -27,24 +29,18 @@ export default function App() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [rows, setRows] = useState([]);
 
-  const rows = [
-    {
-      name: "أرز",
-      total: 0,
-      available: 0,
-    },
-    {
-      name: "مكرونة",
-      total: 0,
-      available: 0,
-    },
-    {
-      name: "عدس",
-      total: 0,
-      available: 0,
-    },
-  ];
+  useEffect(() => {
+    api
+      .get("/items")
+      .then((result) => {
+        setRows(result.data.items);
+      })
+      .catch((err) => {
+        console.log("err", err.message);
+      });
+  }, []);
 
   const handleSelect = (name) => {
     setSelected((prev) =>
@@ -59,7 +55,7 @@ export default function App() {
     if (editMode) {
       setFormData(rows.filter((row) => selected.includes(row.name)));
     } else {
-      setFormData([{ name: "", total: "", available: "" }]);
+      setFormData([{ name: "", total: 0, available: 0 }]);
     }
     setOpen(true);
   };
@@ -79,9 +75,11 @@ export default function App() {
   const handleSave = async () => {
     try {
       if (isEditing) {
-        await api.put("/items", formData);
+        console.log(formData);
+        // await api.put("/items", formData);
       } else {
-        await api.post("/items", formData[0]);
+        console.log(formData);
+        // await api.post("/items", formData);
       }
       setOpen(false);
     } catch (error) {
@@ -102,45 +100,154 @@ export default function App() {
     }
   };
 
+  const handleAddForm = () => {
+    setFormData([...formData, { name: "", total: 0, available: 0 }]);
+  };
+
+  const handleRemoveForm = (index) => {
+    setFormData(formData.filter((_, i) => i !== index));
+  };
+
   return (
     <>
       <Typography
         component="h1"
         variant="h2"
-        sx={{ textAlign: "center", my: 4, mx: "auto" }}
+        sx={{
+          textAlign: "center",
+          my: 4,
+          mx: "auto",
+          fontFamily: "'El Messiri', sans-serif",
+        }}
       >
         شنط رمضان
       </Typography>
       <TableContainer
-        sx={{ width: "95%", margin: "auto" }}
+        sx={{ width: "95%", mx: "auto", mt: 0, mb: 4 }}
         component={Paper}
         dir="rtl"
         className="table"
         elevation={1}
       >
-        <Table>
+        <Table sx={{ m: "auto" }}>
           <TableHead>
             <TableRow>
-              <TableCell></TableCell>
-              <TableCell>الصنف</TableCell>
-              <TableCell>اجمالي المطلوب</TableCell>
-              <TableCell>المتاح</TableCell>
-              <TableCell>المتبقي</TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 17.5,
+                  padding: 2,
+                  textAlign: "center",
+                  width: "fit-content",
+                  fontFamily: "'El Messiri', sans-serif",
+                }}
+              ></TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 17.5,
+                  padding: 2,
+                  textAlign: "center",
+                  width: "fit-content",
+                  fontFamily: "'El Messiri', sans-serif",
+                }}
+              >
+                الصنف
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 17.5,
+                  padding: 2,
+                  textAlign: "center",
+                  width: "fit-content",
+                  fontFamily: "'El Messiri', sans-serif",
+                }}
+              >
+                اجمالي المطلوب
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 17.5,
+                  padding: 2,
+                  textAlign: "center",
+                  width: "fit-content",
+                  fontFamily: "'El Messiri', sans-serif",
+                }}
+              >
+                المتاح
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 17.5,
+                  padding: 2,
+                  textAlign: "center",
+                  width: "fit-content",
+                  fontFamily: "'El Messiri', sans-serif",
+                }}
+              >
+                المتبقي
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.name}>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: 17.5,
+                    padding: 2,
+                    textAlign: "center",
+                    width: "fit-content",
+                    fontFamily: "'El Messiri', sans-serif",
+                  }}
+                >
                   <Checkbox
                     checked={selected.includes(row.name)}
                     onChange={() => handleSelect(row.name)}
                   />
                 </TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.total}</TableCell>
-                <TableCell>{row.available}</TableCell>
-                <TableCell>{row.total - row.available}</TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: 17.5,
+                    padding: 2,
+                    textAlign: "center",
+                    width: "fit-content",
+                    fontFamily: "'El Messiri', sans-serif",
+                  }}
+                >
+                  {row.name}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: 17.5,
+                    padding: 2,
+                    textAlign: "center",
+                    width: "fit-content",
+                    fontFamily: "'El Messiri', sans-serif",
+                  }}
+                >
+                  {row.total}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: 17.5,
+                    padding: 2,
+                    textAlign: "center",
+                    width: "fit-content",
+                    fontFamily: "'El Messiri', sans-serif",
+                  }}
+                >
+                  {row.available}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: 17.5,
+                    padding: 2,
+                    textAlign: "center",
+                    width: "fit-content",
+                    fontFamily: "'El Messiri', sans-serif",
+                  }}
+                >
+                  {Number(row.total) - Number(row.available)}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -150,24 +257,24 @@ export default function App() {
         <Button
           variant="contained"
           color="error"
+          sx={{ mt: 0, mr: 2, ml: 2, mb: 4, fontSize: "var(--r101)" }}
           onClick={handleDeleteOpen}
-          sx={{ mt: 0, mr: 2, ml: 4, mb: 4, fontSize: "var(--r101)" }}
         >
           حذف
         </Button>
         <Button
           variant="contained"
           color="primary"
+          sx={{ mt: 0, mr: 2, ml: 2, mb: 4, fontSize: "var(--r101)" }}
           onClick={() => handleOpen(true)}
-          sx={{ mt: 0, mr: 2, ml: 4, mb: 4, fontSize: "var(--r101)" }}
         >
           تعديل
         </Button>
         <Button
           variant="contained"
           color="success"
+          sx={{ mt: 0, mr: 2, ml: 2, mb: 4, fontSize: "var(--r101)" }}
           onClick={() => handleOpen(false)}
-          sx={{ mt: 0, mr: 2, ml: 4, mb: 4, fontSize: "var(--r101)" }}
         >
           إضافة عنصر
         </Button>
@@ -178,47 +285,58 @@ export default function App() {
         </DialogTitle>
         <DialogContent>
           {formData.map((item, index) => (
-            <Box key={index} sx={{ mb: 2 }}>
+            <Box key={index} sx={{ mb: 2, position: "relative" }}>
               <TextField
                 label="الصنف"
-                value={item.name}
+                defaultValue={item.name}
                 fullWidth
                 margin="dense"
               />
               <TextField
                 label="اجمالي المطلوب"
-                value={item.total}
+                defaultValue={item.total}
                 fullWidth
                 margin="dense"
-                type="number"
               />
               <TextField
                 label="المتاح"
-                value={item.available}
+                defaultValue={item.available}
                 fullWidth
                 margin="dense"
-                type="number"
               />
+              {!isEditing && (
+                <IconButton
+                  onClick={() => handleRemoveForm(index)}
+                  sx={{ position: "absolute", top: 0, left: 0 }}
+                >
+                  <Close />
+                </IconButton>
+              )}
               {isEditing && index < formData.length - 1 && (
                 <Divider sx={{ my: 2 }} />
               )}
             </Box>
           ))}
         </DialogContent>
+        {!isEditing && (
+          <Button onClick={handleAddForm} startIcon={<Add />} sx={{ mx: 2 }}>
+            إضافة عنصر آخر
+          </Button>
+        )}
         <DialogActions>
           <Button
             variant="contained"
             color="error"
             onClick={handleClose}
-            sx={{ mx: 1 }}
+            sx={{ mt: 0, mr: 2, ml: 0, mb: 0, fontSize: "var(--r101)" }}
           >
             إلغاء
           </Button>
           <Button
             variant="contained"
             color="success"
+            sx={{ mt: 0, mr: 2, ml: 0, mb: 0, fontSize: "var(--r101)" }}
             onClick={handleSave}
-            sx={{ mx: 1 }}
           >
             تم
           </Button>

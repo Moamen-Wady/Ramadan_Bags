@@ -37,7 +37,6 @@ export default memo(function Home({ notify }) {
           my: 4,
           mx: "auto",
           fontFamily: "'El Messiri', sans-serif",
-          color:'white'
         }}
       >
         شنط رمضان

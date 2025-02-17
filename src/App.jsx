@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import Loading from "./Loading";
 const Home = lazy(() => import("./Home"));
+const Admin = lazy(() => import("./Admin"));
 
 const notify = (e, msg) => {
   toast[e](msg, {
@@ -28,6 +29,7 @@ export default function App() {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Home notify={notify} />} />
+            <Route path="/radmin" element={<Admin notify={notify} />} />
           </Routes>
         </Suspense>
       </Router>

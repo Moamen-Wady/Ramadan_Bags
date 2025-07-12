@@ -22,15 +22,30 @@ import {
 } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 
-export default memo(function Admin({ notify }) {
-  const [user, setUser] = useState(null);
+type item = {
+  _id: string;
+  name: string;
+  unit: string;
+  available: number;
+  total: number;
+};
 
+export default memo(function Admin({
+  notify,
+}: {
+  notify: (e: string, msg: string) => void;
+}) {
+  const [user, setUser] = useState<string | null>(null);
   const [isDisabled, setIsDisabled] = useState(false);
-  const disableButtons = (state) => {
+  const disableButtons = (state: boolean) => {
     setIsDisabled(state);
   };
 
-  const LoginBox = memo(function LoginBox({ notify }) {
+  const LoginBox = memo(function LoginBox({
+    notify,
+  }: {
+    notify: (e: string, msg: string) => void;
+  }) {
     const [password, setPassword] = useState("");
 
     const handleLogin = () => {
@@ -38,16 +53,16 @@ export default memo(function Admin({ notify }) {
       api
         .post("/login", { pw: password })
         .then((data) => {
-          if (data.data.status == "ok") {
-            sessionStorage.setItem("user", data.data.user);
-            setUser(data.data.user);
-            notify("success", "تم تسجيل الدخول بنجاح");
-          } else {
-            notify("error", "Wrong Password");
-          }
+          sessionStorage.setItem("user", data.data.user);
+          setUser(data.data.user);
+          notify("success", "تم تسجيل الدخول بنجاح");
         })
-        .catch(() => {
-          notify("error", "Network Error");
+        .catch((err) => {
+          if (err.status === 401) {
+            notify("error", "Wrong Password");
+          } else {
+            notify("error", "Network Error");
+          }
         })
         .finally(() => {
           disableButtons(false);
@@ -99,14 +114,21 @@ export default memo(function Admin({ notify }) {
     );
   });
 
-  const TableEdit = memo(function TableEdit({ notify }) {
-    const [selected, setSelected] = useState([]);
-    const [open, setOpen] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState([]);
-    const [updatedFormData, setUpdatedFormData] = useState([]);
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [rows, setRows] = useState([]);
+  const TableEdit = memo(function TableEdit({
+    notify,
+  }: {
+    notify: (e: string, msg: string) => void;
+  }) {
+    const [selected, setSelected] = useState<string[]>([]);
+    const [open, setOpen] = useState<boolean>(false);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+
+    const [formData, setFormData] = useState<item[] | Omit<item, "_id">[]>([]);
+    const [updatedFormData, setUpdatedFormData] = useState<
+      item[] | Omit<item, "_id">[]
+    >([]);
+    const [rows, setRows] = useState<item[]>([]);
 
     useEffect(() => {
       const controller = new AbortController();
@@ -122,16 +144,17 @@ export default memo(function Admin({ notify }) {
         });
       return () => controller.abort();
     }, []);
-    const handleSelect = (id) => {
+
+    const handleSelect = (id: string) => {
       setSelected((prev) =>
         prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
       );
     };
-    const handleOpen = (editMode) => {
+    const handleOpen = (editMode: boolean) => {
       setIsEditing(editMode);
       const data = editMode
         ? rows.filter((row) => selected.includes(row._id))
-        : [{ name: "", unit: "", total: "", available: "" }];
+        : [{ name: "", unit: "", total: 0, available: 0 } as Omit<item, "_id">];
 
       setFormData(data);
       setUpdatedFormData(data);
@@ -146,7 +169,7 @@ export default memo(function Admin({ notify }) {
     const handleDeleteClose = () => {
       setDeleteDialogOpen(false);
     };
-    const disableButtons = (state) => {
+    const disableButtons = (state: boolean) => {
       setIsDisabled(state);
     };
     const handleSave = async () => {
@@ -193,10 +216,10 @@ export default memo(function Admin({ notify }) {
     const handleAddForm = () => {
       setFormData([
         ...formData,
-        { name: "", unit: "", total: "", available: "" },
+        { name: "", unit: "", total: 0, available: 0 },
       ]);
     };
-    const handleRemoveForm = (index) => {
+    const handleRemoveForm = (index: number) => {
       setFormData(formData.filter((_, i) => i !== index));
     };
 
@@ -286,7 +309,7 @@ export default memo(function Admin({ notify }) {
             {isEditing ? "تعديل العناصر" : "إضافة عنصر جديد"}
           </DialogTitle>
           <DialogContent>
-            {formData.map((item, index) => (
+            {formData.map((item: item | Omit<item, "_id">, index: number) => (
               <Box key={index} sx={{ mb: 2, position: "relative" }}>
                 <TextField
                   label="الصنف"
@@ -318,12 +341,14 @@ export default memo(function Admin({ notify }) {
                 />
                 <TextField
                   label="اجمالي المطلوب"
-                  defaultValue={updatedFormData[index]?.total || ""}
+                  inputMode="numeric"
+                  type="number"
+                  defaultValue={updatedFormData[index]?.total || 0}
                   onChange={(e) => {
                     const newData = [...updatedFormData];
                     newData[index] = {
                       ...newData[index],
-                      total: e.target.value,
+                      total: Number(e.target.value),
                     };
                     setUpdatedFormData(newData);
                   }}
@@ -332,12 +357,14 @@ export default memo(function Admin({ notify }) {
                 />
                 <TextField
                   label="المتاح"
-                  defaultValue={updatedFormData[index]?.available || ""}
+                  inputMode="numeric"
+                  type="number"
+                  defaultValue={updatedFormData[index]?.available || 0}
                   onChange={(e) => {
                     const newData = [...updatedFormData];
                     newData[index] = {
                       ...newData[index],
-                      available: e.target.value,
+                      available: Number(e.target.value),
                     };
                     setUpdatedFormData(newData);
                   }}

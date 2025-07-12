@@ -11,8 +11,20 @@ import {
   Typography,
 } from "@mui/material";
 
-export default memo(function Home({ notify }) {
-  const [rows, setRows] = useState([]);
+type item = {
+  _id: string;
+  name: string;
+  unit: string;
+  available: number;
+  total: number;
+};
+
+export default memo(function Home({
+  notify,
+}: {
+  notify: (e: string, msg: string) => void;
+}) {
+  const [rows, setRows] = useState<item[]>([]);
   useEffect(() => {
     const controller = new AbortController();
     api

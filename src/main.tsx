@@ -17,7 +17,7 @@ if (rootElement) {
   root.render(
     <StrictMode>
       <App />
-    </StrictMode>
+    </StrictMode>,
   );
 } else {
   console.error('Root element with id "root" not found.');

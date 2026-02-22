@@ -1,4 +1,5 @@
 import { useState, useEffect, memo } from "react";
+import { useNavigate } from "react-router-dom";
 import api, { isCancel } from "./api";
 import {
   Table,
@@ -9,6 +10,8 @@ import {
   TableContainer,
   Paper,
   Typography,
+  Button,
+  Box,
 } from "@mui/material";
 
 type item = {
@@ -22,8 +25,9 @@ type item = {
 export default memo(function Home({
   notify,
 }: {
-  notify: (e: string, msg: string) => void;
+  notify: (e: "error" | "warn" | "success" | "info", msg: string) => void;
 }) {
+  const navigate = useNavigate();
   const [rows, setRows] = useState<item[]>([]);
   useEffect(() => {
     const controller = new AbortController();
@@ -41,18 +45,27 @@ export default memo(function Home({
   }, []);
   return (
     <>
-      <Typography
-        component="h1"
-        variant="h2"
-        sx={{
-          textAlign: "center",
-          my: 4,
-          mx: "auto",
-          fontFamily: "'El Messiri', sans-serif",
-        }}
-      >
-        شنط رمضان
-      </Typography>
+      <Box sx={{ position: "relative", my: 4 }}>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/radmin")}
+          sx={{ position: "absolute", left: 0, top: 0 }}
+        >
+          Admin Page
+        </Button>
+        <Typography
+          component="h1"
+          variant="h2"
+          sx={{
+            textAlign: "center",
+            my: 4,
+            mx: "auto",
+            fontFamily: "'El Messiri', sans-serif",
+          }}
+        >
+          شنط رمضان
+        </Typography>
+      </Box>
       <TableContainer
         component={Paper}
         dir="rtl"

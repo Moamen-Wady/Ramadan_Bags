@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=El+Messiri:wght@500&display=swap");
 
 @media only screen and (max-width: 499px) {
-  body .loginBox{
+  body .loginBox {
     width: 90% !important;
   }
   body h1 {
@@ -77,6 +77,6 @@ button {
 .butContButton {
   margin-right: 16px !important;
 }
-.loginBox{
+.loginBox {
   width: fit-content !important;
 }

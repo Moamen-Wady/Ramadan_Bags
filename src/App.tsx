@@ -7,7 +7,7 @@ import Loading from "./Loading";
 const Home = lazy(() => import("./Home"));
 const Admin = lazy(() => import("./Admin"));
 
-const notify = (e: string, msg: string) => {
+const notify = (e: "error" | "warn" | "success" | "info", msg: string) => {
   toast[e](msg, {
     position: "top-center",
     autoClose: 1500,

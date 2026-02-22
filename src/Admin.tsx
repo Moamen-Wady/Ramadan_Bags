@@ -1,4 +1,5 @@
 import { useState, useEffect, memo } from "react";
+import { useNavigate } from "react-router-dom";
 import api, { isCancel } from "./api";
 import {
   Table,
@@ -33,96 +34,20 @@ type item = {
 export default memo(function Admin({
   notify,
 }: {
-  notify: (e: string, msg: string) => void;
+  notify: (e: "error" | "warn" | "success" | "info", msg: string) => void;
 }) {
-  const [user, setUser] = useState<string | null>(null);
-  const [isDisabled, setIsDisabled] = useState(false);
-  const disableButtons = (state: boolean) => {
-    setIsDisabled(state);
-  };
-
-  const LoginBox = memo(function LoginBox({
-    notify,
-  }: {
-    notify: (e: string, msg: string) => void;
-  }) {
-    const [password, setPassword] = useState("");
-
-    const handleLogin = () => {
-      disableButtons(true);
-      api
-        .post("/login", { pw: password })
-        .then((data) => {
-          sessionStorage.setItem("user", data.data.user);
-          setUser(data.data.user);
-          notify("success", "تم تسجيل الدخول بنجاح");
-        })
-        .catch((err) => {
-          if (err.status === 401) {
-            notify("error", "Wrong Password");
-          } else {
-            notify("error", "Network Error");
-          }
-        })
-        .finally(() => {
-          disableButtons(false);
-        });
-    };
-
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-        }}
-      >
-        <Box
-          sx={{
-            padding: 4,
-            border: "1px solid #ccc",
-            borderRadius: 2,
-            boxShadow: 3,
-            textAlign: "center",
-            backgroundColor: "white",
-          }}
-          className="loginBox"
-        >
-          <Typography variant="h6" gutterBottom>
-            Login
-          </Typography>
-          <TextField
-            type="password"
-            label="Password"
-            variant="outlined"
-            fullWidth
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleLogin}
-          >
-            Login
-          </Button>
-        </Box>
-      </Box>
-    );
-  });
+  const navigate = useNavigate();
 
   const TableEdit = memo(function TableEdit({
     notify,
   }: {
-    notify: (e: string, msg: string) => void;
+    notify: (e: "error" | "warn" | "success" | "info", msg: string) => void;
   }) {
     const [selected, setSelected] = useState<string[]>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+    const [isDisabled, setIsDisabled] = useState(false);
 
     const [formData, setFormData] = useState<item[] | Omit<item, "_id">[]>([]);
     const [updatedFormData, setUpdatedFormData] = useState<
@@ -147,7 +72,7 @@ export default memo(function Admin({
 
     const handleSelect = (id: string) => {
       setSelected((prev) =>
-        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
       );
     };
     const handleOpen = (editMode: boolean) => {
@@ -442,7 +367,17 @@ export default memo(function Admin({
       </>
     );
   });
+
   return (
-    <>{user ? <TableEdit notify={notify} /> : <LoginBox notify={notify} />}</>
+    <Box sx={{ position: "relative", minHeight: "100vh" }}>
+      <Button
+        variant="contained"
+        onClick={() => navigate("/")}
+        sx={{ position: "absolute", left: 20, top: 20, zIndex: 1000 }}
+      >
+        Home
+      </Button>
+      <TableEdit notify={notify} />
+    </Box>
   );
 });
